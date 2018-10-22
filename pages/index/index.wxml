@@ -1,13 +1,30 @@
-<!--index.wxml-->
+
 <view class="container">
-  <view class="userinfo">
-    <button wx:if="{{!hasUserInfo && canIUse}}" open-type="getUserInfo" bindgetuserinfo="getUserInfo"> 获取头像昵称 </button>
-    <block wx:else>
-      <image bindtap="bindViewTap" class="userinfo-avatar" src="{{userInfo.avatarUrl}}" mode="cover"></image>
-      <text class="userinfo-nickname">{{userInfo.nickName}}</text>
-    </block>
-  </view>
-  <view class="usermotto">
-    <text class="user-motto">{{motto}}</text>
+  <view class="page-body">
+    <form catchsubmit="formSubmit">
+      <view class="page-section">
+        <view class="page-section-title">电话：</view>
+        <view >
+          <view>
+            <view>
+              <input class="public-input" type="text" name="name" placeholder="这是一个输入框" />
+            </view>
+          </view>
+        </view>
+      </view>
+      <view class="page-section">
+        <view class="page-section-title">密码：</view>
+        <view>
+          <view>
+            <view>
+              <input class="public-input" type="password" name="password" placeholder="这是一个输入框" />
+            </view>
+          </view>
+        </view>
+      </view>
+      <view class="btn-area">
+        <button type="primary" formType="submit">Submit</button>
+      </view>
+    </form>
   </view>
 </view>
