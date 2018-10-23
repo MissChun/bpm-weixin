@@ -1,29 +1,29 @@
 
 <view class="container">
   <view class="page-body">
-    <form catchsubmit="formSubmit">
+    <view class="logo-view">
+      <view>
+        <image class="logo-img" src="/images/logo.png"></image>
+      </view>
+      <view>
+        <text class="system-name">贸易管理系统</text>
+      </view>
+    </view>
+    <form bindsubmit="formSubmit">
       <view class="page-section">
-        <view class="page-section-title">电话：</view>
-        <view >
-          <view>
-            <view>
-              <input class="public-input" type="text" name="name" placeholder="这是一个输入框" />
-            </view>
-          </view>
+        <view class="input-column">
+          <image class="input-img" src="/images/phone.png"></image>
+          <input class="public-input" type="text" name="name" placeholder="请输入电话号码" />
         </view>
       </view>
       <view class="page-section">
-        <view class="page-section-title">密码：</view>
-        <view>
-          <view>
-            <view>
-              <input class="public-input" type="password" name="password" placeholder="这是一个输入框" />
-            </view>
-          </view>
+        <view class="input-column">
+          <image class="input-img" src="/images/password.png"></image>
+          <input class="public-input" type="password" name="password" placeholder="请输入密码" />
         </view>
       </view>
-      <view class="btn-area">
-        <button type="primary" formType="submit">Submit</button>
+      <view class="btn-view">
+        <button  formType="submit" class="submit-btn">登录</button>
       </view>
     </form>
   </view>

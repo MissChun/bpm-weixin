@@ -4,9 +4,6 @@
   padding: 0 40rpx;
   box-sizing: border-box;
 }
-.page-section{
-  padding:20rpx 0;
-}
 label {
   display: inline-block;
   min-width: 270rpx;
@@ -16,13 +13,55 @@ form{
   width: 100%;
 }
 
+.logo-view{
+  width:240rpx;
+  margin: 90rpx auto; 
+  text-align:center;
+}
+
+.logo-img{
+  width:240rpx;
+  height:92rpx;
+}
+
+.system-name{
+  font-size:28rpx;
+  line-height:40rpx;
+  letter-spacing:13rpx;
+  color:#233E5E;
+}
+
+.input-column{
+  position:relative;
+  padding: 70rpx 10rpx 0rpx 58rpx;
+  height:140rpx;
+  border-bottom:1rpx solid #E1E1E1;
+  box-sizing: border-box;
+}
+.input-img{
+  position:absolute;
+  width:40rpx;
+  height:40rpx;
+  left:0;
+  top:76rpx;
+}
 .public-input{
   display: block;
   width:100%;
-  height: 80rpx;
-  line-height: 80rpx;
+  height: 50rpx;
+  line-height: 50rpx;
   border-radius: 10rpx;
   padding:0 10rpx;
-  border:1px solid #ccc;
+  font-size:32rpx;
+}
+.btn-view{
+  margin-top:160rpx;
+}
+.submit-btn{
+  font-size:36rpx;
+  background-color:#17BEBB;
+  color:#ffffff;
+  height:94rpx;
+  line-height:94rpx;
 }
 

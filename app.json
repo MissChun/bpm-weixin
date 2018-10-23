@@ -1,7 +1,8 @@
 {
   "pages":[
     "pages/index/index",
-    "pages/dashborad/dashborad"
+    "pages/dashborad/dashborad",
+    "pages/waybillList/waybillList"
   ],
   "window":{
     "backgroundTextStyle":"light",

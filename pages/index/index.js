@@ -65,6 +65,9 @@ Page({
     const verifyFormResult = this.verifyForm(formData);
     if(verifyFormResult.isVerify){
       //this.formSubmitRequest(formData);
+      wx.navigateTo({
+        url:'/pages/dashborad/dashborad'
+      })
     }else{
       wx.showModal({
         content: verifyFormResult.errorMsg,
