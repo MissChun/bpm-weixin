@@ -36,7 +36,7 @@
 			"list": []
 		},
 		"miniprogram": {
-			"current": 1,
+			"current": 2,
 			"list": [
 				{
 					"id": -1,
@@ -47,7 +47,13 @@
 				{
 					"id": -1,
 					"name": "运单列表",
-					"pathName": "pages/waybillList/waybillList"
+					"pathName": "pages/waybillList/waybillList",
+					"query": ""
+				},
+				{
+					"id": -1,
+					"name": "匹配卸货地",
+					"pathName": "pages/matchWaybill/matchWaybill"
 				}
 			]
 		}

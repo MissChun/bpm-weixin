@@ -6,7 +6,7 @@
 				<view class="traggle-pick float-left">
 					<picker mode="selector" bindchange="chooseField" range-key="label" value="{{choosedFieldIndex}}" range="{{fieldList}}">
 					    <view class="float-left filed-picker">{{fieldList[choosedFieldIndex].label}}</view>
-					    <view class="float-right traggle-down"><image src="/images/password.png" /></view>
+					    <view class="float-right traggle-down"><image src="/images/traggle_down.png" /></view>
 					</picker>
 				</view>
 				<view class="float-left search-input-view">
@@ -22,7 +22,58 @@
 	</view>
 	<view class="waybill-list">
 		<view class="waybill-item">
-			
+			<view class="waybill-item-title">
+				<text class="float-left">运单号：T8188832323</text>
+				<text class="float-right">川A234</text>
+			</view>
+			<view class="waybill-item-content">
+				<view>计划液厂：福建海投新能源有限公司</view>
+				<view>计划装车时间：2018-10-18</view>
+				<view>实际到厂时间：2018-10-18</view>
+				<view class="position-relative">
+					<text>实际装车吨位：20顿</text>
+					<text class="waybill-status">已装车待审核</text>
+				</view>
+				<view>
+					<button  bindtap="goMatch" class="go-match-btn">匹配卸货地</button>
+				</view>
+			</view>
+		</view>
+		<view class="waybill-item">
+			<view class="waybill-item-title">
+				<text class="float-left">运单号：T8188832323</text>
+				<text class="float-right">川A234</text>
+			</view>
+			<view class="waybill-item-content">
+				<view>计划液厂：福建海投新能源有限公司</view>
+				<view>计划装车时间：2018-10-18</view>
+				<view>实际到厂时间：2018-10-18</view>
+				<view class="position-relative">
+					<text>实际装车吨位：20顿</text>
+					<text class="waybill-status">已装车待审核</text>
+				</view>
+				<view>
+					<button  bindtap="goMatch" class="go-match-btn">匹配卸货地</button>
+				</view>
+			</view>
+		</view>
+		<view class="waybill-item">
+			<view class="waybill-item-title">
+				<text class="float-left">运单号：T8188832323</text>
+				<text class="float-right">川A234</text>
+			</view>
+			<view class="waybill-item-content">
+				<view>计划液厂：福建海投新能源有限公司</view>
+				<view>计划装车时间：2018-10-18</view>
+				<view>实际到厂时间：2018-10-18</view>
+				<view class="position-relative">
+					<text>实际装车吨位：20顿</text>
+					<text class="waybill-status">已装车待审核</text>
+				</view>
+				<view>
+					<button  bindtap="goMatch" class="go-match-btn">匹配卸货地</button>
+				</view>
+			</view>
 		</view>
 	</view>
 </view>

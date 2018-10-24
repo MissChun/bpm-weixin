@@ -5,15 +5,23 @@ Page({
    * 页面的初始数据
    */
   data: {
-    fieldList:[
-      { id: 'carrier_name', label: '承运商' },
-      { id: 'order_number', label: '订单号' },
-      { id: 'truck_no', label: '车号' },
-      { id: 'fluid_name', label: '液厂名' },
-      { id: 'waybill_number', label: '运单号' },
-      { id: 'order_station', label: '卸货站点' }
-    ],
-    choosedFieldIndex:2,
+    fieldList: [{
+      label: '业务单号',
+      id: 'order_number',
+    }, {
+      label: '客户简称',
+      id: 'short_name',
+    }, {
+      label: '液厂',
+      id: 'actual_fluid_name',
+    }, {
+      label: '收货人',
+      id: 'consignee',
+    }, {
+      label: '业务员',
+      id: 'sale_man_name',
+    }],
+    choosedFieldIndex:1,
     topBarList:[{
       label:'装车',
       param:'all_truck_loaded',
@@ -76,24 +84,7 @@ Page({
   getWaybillList(){
     
   },
-  chooseBar(e){
-    console.log('e',e);
-    const choosedParam = e.currentTarget.dataset.param;
-    if(this.currentChoosedBar !== choosedParam){
-      let topBarListCopy = [...this.data.topBarList];
-      console.log('topBarListCopy',topBarListCopy);
-      topBarListCopy.map(item => {
-        item.isChoosed = item.param === choosedParam ? true : false;
-      })
-      this.setData({
-        topBarList:topBarListCopy,
-        currentChoosedBar:choosedParam,
-      })
-    }
-  },
-  goMatch(e){
-    wx.navigateTo({
-        url:'/pages/matchWaybill/matchWaybill'
-      })
+  confirmMatch(){
+
   }
 })
