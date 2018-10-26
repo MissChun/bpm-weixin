@@ -10,7 +10,7 @@
 					<view class="traggle-down"><image src="/images/traggle_down.png" /></view>
 				</view>
 				<view class="search-input-view">
-					<input confirm-type="search" class="public-input" type="text" name="searchWord" placeholder="请输入" />
+					<input confirm-type="search" class="public-input" type="text" name="searchWord" placeholder="请输入" bindtap="searinputChange"/>
 				</view>
 			</view>
 		</view>
@@ -27,11 +27,13 @@
 				<text class="float-right">川A234</text>
 			</view>
 			<view class="waybill-item-content">
-				<view>计划液厂：福建海投新能源有限公司</view>
-				<view>计划装车时间：2018-10-18</view>
-				<view>实际到厂时间：2018-10-18</view>
+				<view><text>运单号：{{item.waybill && item.waybill.waybill_number}}</text></view>
+				<view><text>车号：xxx</text></view>
+				<view><text>计划液厂：福建海投新能源有限公司</text></view>
+				<view><text>计划装车时间：2018-10-18</text></view>
+				<view><text>实际到厂时间：2018-10-18</text></view>
 				<view class="position-relative">
-					<text>实际装车吨位：20顿</text>
+					<text><text>实际装车吨位：20顿</text></text>
 					<text class="waybill-status">已装车待审核</text>
 				</view>
 				<view>

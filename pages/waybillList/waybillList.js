@@ -14,6 +14,9 @@ Page({
       { id: 'order_station', label: '卸货站点' }
     ],
     choosedFieldIndex:2,
+    pageSize:10,
+    currentPage:1,
+    searchword:'',
     topBarList:[{
       label:'装车',
       param:'all_truck_loaded',
@@ -101,7 +104,10 @@ Page({
       tun:'20',
       waybill_status:'a',
       id:'38',
-    }]
+    }],
+
+    
+
 
   },
 
@@ -109,7 +115,7 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad(options) {
-
+    this.getWaybillList();
   },
 
   /**
@@ -143,8 +149,59 @@ Page({
       choosedFieldIndex: e.detail.value
     })
   },
+  searinputChange(e){
+    console.log('e',e);
+    this.setData({
+      searchword: e.detail.value
+    })
+  },
   getWaybillList(){
-    
+    let token = '';
+    let _this = this;
+    let postData = {
+      page : this.data.currentPage,
+      page_size : this.data.pageSize,
+    };
+    if(_this.data.searchword.length){
+      postData[_this.data.fieldList[choosedFieldIndex].id] = _this.data.searchword;
+    }
+
+    wx.getStorage({
+        key: 'token',
+        success(res) {
+            console.log('res', res);
+            token = res.data;
+            wx.request({
+                url: 'http://39.104.71.159:6602/bpmwechat/iYdejC/section-trips', //仅为示例，并非真实的接口地址
+                method: 'GET',
+                data: postData,
+                header: {
+                    'content-type': 'application/json', // 默认值
+                    'Authorization': 'jwt ' + token
+                },
+                success(res) {
+                  console.log('res',res);
+                    if (res.data && res.data.code === 0) {
+                        
+
+                    } else {
+                        if (res.data && res.data.message) {
+                            wx.showModal({
+                                content: res.data.message,
+                                showCancel: false,
+                            })
+                        }
+                    }
+                },
+                fail(error) {
+                    wx.showModal({
+                        content: error,
+                        showCancel: false,
+                    })
+                }
+            })
+        }
+    });
   },
   chooseBar(e){
     console.log('e',e);
