@@ -19,7 +19,8 @@ page {
     box-sizing: border-box;
 
     background-color: #fff;
-    box-shadow: 0 0 10px #dbdbdb;
+    border-radius:8rpx;
+    box-shadow: 0 0 5px #dbdbdb;
 }
 .item-num {
     font-size: 80rpx;

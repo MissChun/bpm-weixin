@@ -6,13 +6,13 @@ Page({
     }
   },
   data: {
-
+    isSendAjax:false,
   },
   verifyForm(formData){
     let   verifyFormResult = {
-      isVerify : true,
-      errorMsg:'',
-    };
+            isVerify : true,
+            errorMsg:'',
+          };
     if(formData.name.length){
       if(!formData.name.match(/^1\d{10}$/)){
         verifyFormResult = {
@@ -41,22 +41,55 @@ Page({
 
   },
   formSubmitRequest(formData){
+
     wx.request({
-      url: 'test.php', //仅为示例，并非真实的接口地址
+      url: 'http://39.104.71.159:6602/bpmwechat/iYdejC/wxlogin', //仅为示例，并非真实的接口地址
+      method:'POST',
       data: {
         username: formData.name,
         password: formData.password,
+        sms_verify_code:'0369',
+        platform: "WEB_CLIENT"
+
       },
       header: {
         'content-type': 'application/json' // 默认值
       },
       success (res) {
-        if (results.data && results.data.code === 0) {
-          
-        }else{
+        console.log('res',res);
+        if (res.data && res.data.code === 1) {
+          const token = res.data.content.token;
+          const userInfo = res.data.content.user_info;
 
+
+          let app = getApp();
+          app.globalData.userInfo = userInfo;
+
+          wx.setStorage({
+            key:"token",
+            data:token,
+            success(){
+              wx.redirectTo({
+                url:'/pages/dashborad/dashborad'
+              })
+            }
+          })
+        }else{
+          if(res.data && res.data.message){
+            wx.showModal({
+              content: res.data.message,
+              showCancel:false,
+            })
+          }
+          
         }
-      } 
+      },
+      fail(error){
+        wx.showModal({
+          content: error,
+          showCancel:false,
+        })
+      }
     })
   },
   formSubmit(e) {
@@ -64,15 +97,16 @@ Page({
     const formData = e.detail.value;
     const verifyFormResult = this.verifyForm(formData);
     if(verifyFormResult.isVerify){
-      //this.formSubmitRequest(formData);
-      wx.navigateTo({
-        url:'/pages/dashborad/dashborad'
-      })
+      this.formSubmitRequest(formData);
     }else{
-      wx.showModal({
-        content: verifyFormResult.errorMsg,
-        showCancel:false,
+      wx.showToast({
+        title:verifyFormResult.errorMsg,
+        icon:'none',
       })
+      // wx.showModal({
+      //   content: verifyFormResult.errorMsg,
+      //   showCancel:false,
+      // })
     }
   },
 })

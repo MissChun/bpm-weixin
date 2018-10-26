@@ -23,7 +23,7 @@
         </view>
       </view>
       <view class="btn-view">
-        <button  formType="submit" class="submit-btn">登录</button>
+        <button  formType="submit" loading="{{isSendAjax}}" disabled="{{isSendAjax}}" class="submit-btn">登录</button>
       </view>
     </form>
   </view>

@@ -5,8 +5,8 @@
 				<view class="traggle-pick float-left">
 					<picker mode="selector" bindchange="chooseField" range-key="label" value="{{choosedFieldIndex}}" range="{{fieldList}}">
 					    <view class="float-left filed-picker">{{fieldList[choosedFieldIndex].label}}</view>
-					    <view class="float-right traggle-down"><image src="/images/traggle_down.png" /></view>
 					</picker>
+					<view class="traggle-down"><image src="/images/traggle_down.png" /></view>
 				</view>
 				<view class="float-left search-input-view">
 					<input confirm-type="search" class="public-input" type="text" name="searchWord" placeholder="请输入" />

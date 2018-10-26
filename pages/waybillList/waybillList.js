@@ -36,6 +36,72 @@ Page({
       isChoosed:false
     }],
     currentChoosedBar:'all_truck_loaded',
+    waybillListData:[{
+      waybill_number:'运单号：T8188832323',
+      fluid_name:'福建海投新能源有限公司',
+      load_time:'2018-10-18',
+      arrival_time:'2018-10-18',
+      tun:'20',
+      waybill_status:'a',
+      id:'1',
+    },{
+      waybill_number:'运单号：T8188832323',
+      fluid_name:'福建海投新能源有限公司',
+      load_time:'2018-10-18',
+      arrival_time:'2018-10-18',
+      tun:'20',
+      waybill_status:'a',
+      id:'2',
+    },{
+      waybill_number:'运单号：T8188832323',
+      fluid_name:'福建海投新能源有限公司',
+      load_time:'2018-10-18',
+      arrival_time:'2018-10-18',
+      tun:'20',
+      waybill_status:'a',
+      id:'3',
+    },{
+      waybill_number:'运单号：T8188832323',
+      fluid_name:'福建海投新能源有限公司',
+      load_time:'2018-10-18',
+      arrival_time:'2018-10-18',
+      tun:'20',
+      waybill_status:'a',
+      id:'4',
+    }],
+    ajaxdata:[{
+      waybill_number:'运单号：T8188832323',
+      fluid_name:'福建海投新能源有限公司',
+      load_time:'2018-10-18',
+      arrival_time:'2018-10-18',
+      tun:'20',
+      waybill_status:'a',
+      id:'35',
+    },{
+      waybill_number:'运单号：T8188832323',
+      fluid_name:'福建海投新能源有限公司',
+      load_time:'2018-10-18',
+      arrival_time:'2018-10-18',
+      tun:'20',
+      waybill_status:'a',
+      id:'36',
+    },{
+      waybill_number:'运单号：T8188832323',
+      fluid_name:'福建海投新能源有限公司',
+      load_time:'2018-10-18',
+      arrival_time:'2018-10-18',
+      tun:'20',
+      waybill_status:'a',
+      id:'37',
+    },{
+      waybill_number:'运单号：T8188832323',
+      fluid_name:'福建海投新能源有限公司',
+      load_time:'2018-10-18',
+      arrival_time:'2018-10-18',
+      tun:'20',
+      waybill_status:'a',
+      id:'38',
+    }]
 
   },
 
@@ -57,7 +123,11 @@ Page({
    * 页面上拉触底事件的处理函数
    */
   onReachBottom() {
-
+    console.log('xxx');
+    wx.showLoading({
+      title:'数据加载中',
+      mask:true,
+    });
   },
 
   /**
@@ -94,6 +164,6 @@ Page({
   goMatch(e){
     wx.navigateTo({
         url:'/pages/matchWaybill/matchWaybill'
-      })
+    })
   }
 })
