@@ -16,6 +16,7 @@ Page({
     choosedFieldIndex:2,
     pageSize:10,
     currentPage:1,
+    total:'',
     searchword:'',
     topBarList:[{
       label:'装车',
@@ -39,76 +40,7 @@ Page({
       isChoosed:false
     }],
     currentChoosedBar:'all_truck_loaded',
-    waybillListData:[{
-      waybill_number:'运单号：T8188832323',
-      fluid_name:'福建海投新能源有限公司',
-      load_time:'2018-10-18',
-      arrival_time:'2018-10-18',
-      tun:'20',
-      waybill_status:'a',
-      id:'1',
-    },{
-      waybill_number:'运单号：T8188832323',
-      fluid_name:'福建海投新能源有限公司',
-      load_time:'2018-10-18',
-      arrival_time:'2018-10-18',
-      tun:'20',
-      waybill_status:'a',
-      id:'2',
-    },{
-      waybill_number:'运单号：T8188832323',
-      fluid_name:'福建海投新能源有限公司',
-      load_time:'2018-10-18',
-      arrival_time:'2018-10-18',
-      tun:'20',
-      waybill_status:'a',
-      id:'3',
-    },{
-      waybill_number:'运单号：T8188832323',
-      fluid_name:'福建海投新能源有限公司',
-      load_time:'2018-10-18',
-      arrival_time:'2018-10-18',
-      tun:'20',
-      waybill_status:'a',
-      id:'4',
-    }],
-    ajaxdata:[{
-      waybill_number:'运单号：T8188832323',
-      fluid_name:'福建海投新能源有限公司',
-      load_time:'2018-10-18',
-      arrival_time:'2018-10-18',
-      tun:'20',
-      waybill_status:'a',
-      id:'35',
-    },{
-      waybill_number:'运单号：T8188832323',
-      fluid_name:'福建海投新能源有限公司',
-      load_time:'2018-10-18',
-      arrival_time:'2018-10-18',
-      tun:'20',
-      waybill_status:'a',
-      id:'36',
-    },{
-      waybill_number:'运单号：T8188832323',
-      fluid_name:'福建海投新能源有限公司',
-      load_time:'2018-10-18',
-      arrival_time:'2018-10-18',
-      tun:'20',
-      waybill_status:'a',
-      id:'37',
-    },{
-      waybill_number:'运单号：T8188832323',
-      fluid_name:'福建海投新能源有限公司',
-      load_time:'2018-10-18',
-      arrival_time:'2018-10-18',
-      tun:'20',
-      waybill_status:'a',
-      id:'38',
-    }],
-
-    
-
-
+    waybillListData:[],
   },
 
   /**
@@ -129,11 +61,10 @@ Page({
    * 页面上拉触底事件的处理函数
    */
   onReachBottom() {
-    console.log('xxx');
-    wx.showLoading({
-      title:'数据加载中',
-      mask:true,
-    });
+    this.setData({
+      currentPage:this.data.currentPage + 1
+    })
+    this.getWaybillList(true);
   },
 
   /**
@@ -145,9 +76,11 @@ Page({
 
   chooseField(e){
      console.log('e.detail',e.detail,this.data.choosedFieldIndex);
-     this.setData({
+    this.setData({
       choosedFieldIndex: e.detail.value
     })
+
+    
   },
   searinputChange(e){
     console.log('e',e);
@@ -155,22 +88,30 @@ Page({
       searchword: e.detail.value
     })
   },
-  getWaybillList(){
+  getWaybillList(isGetMoreData){
+    console.log('xxx');
     let token = '';
     let _this = this;
     let postData = {
       page : this.data.currentPage,
       page_size : this.data.pageSize,
+      search:this.data.currentChoosedBar,
     };
+
     if(_this.data.searchword.length){
       postData[_this.data.fieldList[choosedFieldIndex].id] = _this.data.searchword;
     }
 
-    wx.getStorage({
+    if(!isGetMoreData || this.data.currentPage <= Math.ceil(this.data.total / this.data.pageSize)){
+      wx.getStorage({
         key: 'token',
         success(res) {
             console.log('res', res);
             token = res.data;
+            wx.showLoading({
+              title:'数据加载中',
+              mask:true,
+            });
             wx.request({
                 url: 'http://39.104.71.159:6602/bpmwechat/iYdejC/section-trips', //仅为示例，并非真实的接口地址
                 method: 'GET',
@@ -181,8 +122,16 @@ Page({
                 },
                 success(res) {
                   console.log('res',res);
+                    wx.hideLoading();
                     if (res.data && res.data.code === 0) {
-                        
+                      let waybillListData = [..._this.data.waybillListData];
+                      waybillListData = [...waybillListData,...res.data.data.data];
+                      _this.setData({
+                        waybillListData:waybillListData,
+                        total:res.data.data.count
+                      })
+
+                      console.log('_this.setData.total',_this.data.total,res.data.data.count)
 
                     } else {
                         if (res.data && res.data.message) {
@@ -201,7 +150,10 @@ Page({
                 }
             })
         }
-    });
+      });
+    }
+
+    
   },
   chooseBar(e){
     console.log('e',e);
@@ -215,7 +167,11 @@ Page({
       this.setData({
         topBarList:topBarListCopy,
         currentChoosedBar:choosedParam,
+        currentPage:1,
+        waybillListData:[],
       })
+
+      this.getWaybillList();
     }
   },
   goMatch(e){
