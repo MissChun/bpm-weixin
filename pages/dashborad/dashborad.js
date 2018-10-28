@@ -1,4 +1,10 @@
 // pages/dashborad/dashborad.js
+
+import {
+    httpServer
+} from '../../api/request.js'
+
+
 Page({
 
     /**
@@ -19,49 +25,27 @@ Page({
     onLoad(options) {
         let token = '';
         let _this = this;
-        wx.getStorage({
-            key: 'token',
-            success(res) {
-                console.log('res', res);
-                token = res.data;
-                wx.request({
-                    url: 'http://39.104.71.159:6602/bpmwechat/iYdejC/dashborad', //仅为示例，并非真实的接口地址
-                    method: 'GET',
-                    data: {
-                        filter_type: 'service_centre_schedule'
-                    },
-                    header: {
-                        'content-type': 'application/json', // 默认值
-                        'Authorization': 'jwt ' + token
-                    },
-                    success(res) {
-                        if (res.data && res.data.code === 0) {
-                            let dashboradListCopy = [..._this.data.dashboradList];
-                            dashboradListCopy[0].num = res.data.data.section_waiting_match_count;
+        let postData = {
+            filter_type: 'service_centre_schedule'
+        }
+        httpServer('getDashborad', postData).then(res => {
+            if (res.data && res.data.code === 0) {
+                let dashboradListCopy = [...this.data.dashboradList];
+                dashboradListCopy[0].num = res.data.data.section_waiting_match_count;
 
-                            _this.setData({
-                                dashboradList: dashboradListCopy
-                            })
-
-                        } else {
-                            if (res.data && res.data.message) {
-                                wx.showModal({
-                                    content: res.data.message,
-                                    showCancel: false,
-                                })
-                            }
-                        }
-                    },
-                    fail(error) {
-                        wx.showModal({
-                            content: error,
-                            showCancel: false,
-                        })
-                    }
+                this.setData({
+                    dashboradList: dashboradListCopy
                 })
-            }
-        });
 
+            } else {
+                if (res.data && res.data.message) {
+                    wx.showModal({
+                        content: res.data.message,
+                        showCancel: false,
+                    })
+                }
+            }
+        })
     },
 
     /**

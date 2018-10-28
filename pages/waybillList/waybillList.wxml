@@ -79,8 +79,8 @@
 						<text>{{item.status && item.status.verbose || '无'}}</text>
 					</view>
 
-					<view wx:if="{{item.status.key === 'waiting_match'}}">
-						<button class="go-match-btn" bindtap="goMatch">匹配卸货地</button>
+					<view  wx:if="{{item.status.key === 'waiting_match'}}">
+						<button data-id="{{item.waybill.id}}" class="go-match-btn" bindtap="goMatch">匹配卸货地</button>
 					</view>
 				</view>
 

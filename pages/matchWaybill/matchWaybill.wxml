@@ -9,58 +9,32 @@
 					<view class="traggle-down"><image src="/images/traggle_down.png" /></view>
 				</view>
 				<view class="float-left search-input-view">
-					<input confirm-type="search" class="public-input" type="text" name="searchWord" placeholder="请输入" />
+					<input confirm-type="search" class="public-input" type="text" name="searchWord" placeholder="请输入" bindtap="searinputChange"/>
 				</view>
 			</view>
 		</view>
 	</view>
 	<view class="waybill-list">
-		<view class="waybill-item">
+		<view class="waybill-item" wx:for="{{businessListData}}" wx:key="id">
 			<view class="waybill-item-title">
 				<view class="waybill-item-title-content">
-					<text class="float-left">博群安丘中</text>
-					<text class="no-choose"></text>
-					<icon class="choose-icon" type="success" color="#17BEBB" size="23"></icon>
+					<text class="float-left">{{item.station}}</text>
+					<text class="no-choose" wx-if="{{!item.isChoosed}}" data-index="{{index}}" bindtap="chooseChange"></text>
+					<icon class="choose-icon" type="success" color="#17BEBB" size="23" wx-if="{{item.isChoosed}}" data-index="{{index}}" bindtap="chooseChange"></icon>
 				</view>
 			</view>
 			<view class="waybill-item-content">
-				<view>计划卸车时间：2018-12-01</view>
-				<view>计划卸车吨位</view>
-				<view>收货人：明朗</view>
-				<view>S1sefdf-马明</view>
-			</view>
-		</view>
-		<view class="waybill-item">
-			<view class="waybill-item-title">
-				<view class="waybill-item-title-content">
-					<text class="float-left">运单号：T8188832323</text>
-					<text class="float-right">川A234</text>
-				</view>
-			</view>
-			<view class="waybill-item-content">
-				<view>计划卸车时间：2018-12-01</view>
-				<view>计划卸车吨位</view>
-				<view>收货人：明朗</view>
-				<view>S1sefdf-马明</view>
-			</view>
-		</view>
-		<view class="waybill-item">
-			<view class="waybill-item-title">
-				<view class="waybill-item-title-content">
-					<text class="float-left">运单号：T8188832323</text>
-					<text class="float-right">川A234</text>
-				</view>
-			</view>
-			<view class="waybill-item-content">
-				<view>计划卸车时间：2018-12-01</view>
-				<view>计划卸车吨位</view>
-				<view>收货人：明朗</view>
-				<view>S1sefdf-马明</view>
+				<view>卸货站地址：{{item.station_address}}</view>
+				<view>计划到站时间：{{item.plan_arrive_time}}</view>
+				<view>计划卸车吨位：{{item.plan_tonnage}}吨</view>
+				<view>收货人：{{item.consignee}}</view>
+				<view>需求液厂：{{item.actual_fluid_name}}</view>
+				<view>{{item.order_number}}-{{item.sale_name}}</view>
 			</view>
 		</view>
 	</view>
 	<view class="buttom-confirm">
-		<button  bindtap="confirmMatch" class="confirm-match-btn">提交卸货单</button>
+		<button  bindtap="confirmMatch" loading="{{isMatching}}" disabled="{{isMatching}}"  class="confirm-match-btn">提交卸货单</button>
 	</view>
 </view>
 
