@@ -4,12 +4,12 @@
 		<view class="user-msg">
 			<view><text>姓名：{{userInfo.nick_name}}</text></view>
 			<view><text>电话号码：{{userInfo.mobile_number}}</text></view>
-			<view><text>所属公司：{{userInfo.nick_name}}</text></view>
+			<view><text>所属公司：{{userInfo.company.company_name}}</text></view>
 			<view><text>所属部门：{{userInfo.department}}</text></view>
 			<view><text>职位：{{userInfo.position}}</text></view>
 		</view>
 		<view>
-			<button class="logout-btn">退出</button>
+			<button class="logout-btn" bindtap="logout">退出</button>
 		</view>
 	</view>
 </view>

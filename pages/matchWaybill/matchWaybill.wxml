@@ -9,18 +9,18 @@
 					<view class="traggle-down"><image src="/images/traggle_down.png" /></view>
 				</view>
 				<view class="float-left search-input-view">
-					<input confirm-type="search" class="public-input" type="text" name="searchWord" placeholder="请输入" bindtap="searinputChange"/>
+					<input confirm-type="search" class="public-input" type="text" name="searchWord" placeholder="请输入" bindinput="searinputChange" bindconfirm="startSearch"/>
 				</view>
 			</view>
 		</view>
 	</view>
-	<view class="waybill-list">
+	<view class="waybill-list" wx:if="{{businessListData.length}}">
 		<view class="waybill-item" wx:for="{{businessListData}}" wx:key="id">
 			<view class="waybill-item-title">
 				<view class="waybill-item-title-content">
 					<text class="float-left">{{item.station}}</text>
-					<text class="no-choose" wx-if="{{!item.isChoosed}}" data-index="{{index}}" bindtap="chooseChange"></text>
-					<icon class="choose-icon" type="success" color="#17BEBB" size="23" wx-if="{{item.isChoosed}}" data-index="{{index}}" bindtap="chooseChange"></icon>
+					<text class="no-choose" wx-if="{{item.isChoosed === 'noMatch'}}" data-index="{{index}}" bindtap="chooseChange"></text>
+					<icon class="choose-icon" type="success" color="#17BEBB" size="23" wx-if="{{item.isChoosed === 'matched'}}" data-index="{{index}}" bindtap="chooseChange"></icon>
 				</view>
 			</view>
 			<view class="waybill-item-content">
@@ -32,6 +32,11 @@
 				<view>{{item.order_number}}-{{item.sale_name}}</view>
 			</view>
 		</view>
+	</view>
+	<view class="gray-tip" wx:if="{{total !== '' && currentPage == totalPage && !isGettingList}}">无更多数据哦~</view>
+	<view wx:if="{{!businessListData.length && !isGettingList }}" class="null-view">
+		<view><image src="/images/null_data.png"></image></view>
+		<text>暂无数据哦~</text>
 	</view>
 	<view class="buttom-confirm">
 		<button  bindtap="confirmMatch" loading="{{isMatching}}" disabled="{{isMatching}}"  class="confirm-match-btn">提交卸货单</button>

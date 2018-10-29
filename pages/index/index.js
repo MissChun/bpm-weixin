@@ -1,3 +1,7 @@
+import {
+    httpServer
+} from '../../api/request.js'
+
 Page({
     onShareAppMessage() {
         return {
@@ -42,66 +46,46 @@ Page({
     },
     formSubmitRequest(formData) {
 
-        wx.request({
-            url: 'http://39.104.71.159:6602/bpmwechat/iYdejC/wxlogin', //仅为示例，并非真实的接口地址
-            method: 'POST',
-            data: {
-                username: formData.name,
-                password: formData.password,
-                sms_verify_code: '0369',
-                platform: "WEB_CLIENT"
+        const postData = {
+            username: formData.name,
+            password: formData.password,
+            sms_verify_code: '0369',
+            platform: "WEB_CLIENT"
+        }
+        httpServer('login', postData).then(res => {
+            if (res.data && res.data.code === 1) {
+                const token = res.data.content.token;
+                let userInfo = res.data.content.user_info;
+                userInfo.company = res.data.content.user.profile.company;
 
-            },
-            header: {
-                'content-type': 'application/json' // 默认值
-            },
-            success(res) {
-                console.log('res', res);
-                if (res.data && res.data.code === 1) {
-                    const token = res.data.content.token;
-                    const userInfo = res.data.content.user_info;
+                wx.setStorage({
+                    key: "userInfo",
+                    data: userInfo,
+                })
 
-                    console.log('token',token,userInfo);
-
-                    wx.setStorage({
-                        key: "userInfo",
-                        data: userInfo,
-                    })
-
-                    wx.setStorage({
-                        key: "token",
-                        data: token,
-                        success() {
-                          console.log('xxx1')
-                            wx.switchTab({
-                                url: '/pages/dashborad/dashborad',
-                            })
-                        },
-                        fail(){
-                          onsole.log('xxx2')
-                        }
-                    })
-
-                } else {
-                    if (res.data && res.data.message) {
-                        wx.showModal({
-                            content: res.data.message,
-                            showCancel: false,
+                wx.setStorage({
+                    key: "token",
+                    data: token,
+                    success() {
+                        wx.switchTab({
+                            url: '/pages/dashborad/dashborad',
                         })
                     }
-
-                }
-            },
-            fail(error) {
-                wx.showModal({
-                    content: error,
-                    showCancel: false,
                 })
+
+            } else {
+                if (res.data && res.data.message) {
+                    wx.showModal({
+                        content: res.data.message,
+                        showCancel: false,
+                    })
+                }
+
             }
         })
+
     },
     formSubmit(e) {
-        console.log('form发生了submit事件，携带数据为：', e.detail.value);
         const formData = e.detail.value;
         const verifyFormResult = this.verifyForm(formData);
         if (verifyFormResult.isVerify) {

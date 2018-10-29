@@ -9,6 +9,23 @@
  */
 
 const api = {
+  login:{
+    url: '/bpmwechat/iYdejC/wxlogin',
+    method: 'post',
+    desc: '登录',
+    notNeedToken:true,
+    param: {
+
+    }
+  },
+  logout:{
+    url: '/bpmwechat/iYdejC/wxlogin/out/',
+    method: 'delete',
+    desc: '登出',
+    param: {
+
+    }
+  },
   getDashborad: {
     url: '/bpmwechat/iYdejC/dashborad',
     method: 'get',
@@ -25,7 +42,14 @@ const api = {
 
     }
   },
+  getMatchedList:{
+    url: '/bpmwechat/iYdejC/match-helpers/check-order/',
+    method: 'post',
+    desc: '获取已匹配业务单',
+    param: {
 
+    }
+  },
   getBusinessList: {
     url: '/bpmwechat/iYdejC/business_order',
     method: 'get',
@@ -34,7 +58,6 @@ const api = {
 
     }
   },
-
   matchOrder:{
     url: '/bpmwechat/iYdejC/waybill-business/match-business-order/',
     method: 'post',
@@ -42,8 +65,23 @@ const api = {
     param: {
 
     }
-  }
+  },
+  getTractor:{
+    url: '/bpmwechat/iYdejC/tractor_semitrailers',
+    method: 'get',
+    desc: '获取运力id',
+    param: {
 
+    }
+  },
+  judeIsCancel:{
+    url: '/bpmwechat/iYdejC/whether-opts/can-cancel/',
+    method: 'post',
+    desc: '判断已匹配的业务单是否能够更改',
+    param: {
+
+    }
+  }
 }
 
 export default api;

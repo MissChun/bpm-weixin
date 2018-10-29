@@ -33,6 +33,7 @@ Page({
         pageSize: 10,
         currentPage: 1,
         total: '',
+        totalPage:'',
         searchword: '',
         topBarList: [{
             label: '装车',
@@ -57,6 +58,7 @@ Page({
         }],
         currentChoosedBar: 'all_truck_loaded',
         waybillListData: [],
+        isGettingList: true,
     },
 
     /**
@@ -69,9 +71,6 @@ Page({
      * 页面上拉触底事件的处理函数
      */
     onReachBottom() {
-        this.setData({
-            currentPage: this.data.currentPage + 1
-        })
         this.getWaybillList(true);
     },
 
@@ -83,16 +82,22 @@ Page({
     },
 
     chooseField(e) {
-        console.log('e.detail', e.detail, this.data.choosedFieldIndex);
         this.setData({
             choosedFieldIndex: e.detail.value
         })
     },
     searinputChange(e) {
-        console.log('e', e);
         this.setData({
             searchword: e.detail.value
         })
+    },
+    startSearch(e) {
+        this.setData({
+            currentPage: 1,
+            waybillListData: [],
+            isGettingList:true,
+        })
+        this.getWaybillList();
     },
     getWaybillList(isGetMoreData) {
 
@@ -103,23 +108,45 @@ Page({
         };
 
         if (this.data.searchword.length) {
-            postData[this.data.fieldList[choosedFieldIndex].id] = this.data.searchword;
+            postData[this.data.fieldList[this.data.choosedFieldIndex].id] = this.data.searchword;
         }
 
-        if (!isGetMoreData || this.data.currentPage <= Math.ceil(this.data.total / this.data.pageSize)) {
+        if (!isGetMoreData || this.data.currentPage < this.data.totalPage) {
+
+            if(isGetMoreData){
+                postData.page = this.data.currentPage +1;
+            }
             wx.showLoading({
                 title: '数据加载中',
                 mask: true,
             });
+            this.setData({
+                isGettingList: true
+            })
             httpServer('getWaybillList', postData).then(res => {
                 wx.hideLoading();
                 if (res.data && res.data.code === 0) {
-                    let waybillListData = [...this.data.waybillListData];
-                    waybillListData = [...waybillListData, ...res.data.data.data];
-                    this.setData({
-                        waybillListData: waybillListData,
-                        total: res.data.data.count
-                    })
+                    let resultsData = res.data.data.data;
+                    let tractorList = resultsData.map(item => item.capacity);
+
+                    this.getTractor(tractorList).then(result =>{
+                        resultsData.map((item,index) =>{
+                            item.capacityDetail = result.data.data.results[index];
+                        })
+                       let waybillListData = [...this.data.waybillListData, ...resultsData];
+                        this.setData({
+                            waybillListData: waybillListData,
+                            total: res.data.data.count,
+                            totalPage:Math.ceil(res.data.data.count / this.data.pageSize),
+                            isGettingList: false
+                        })
+                        if(isGetMoreData){
+                            this.setData({
+                                currentPage: this.data.currentPage + 1
+                            })
+                        }
+                    });
+
                 } else {
                     if (res.data && res.data.message) {
                         wx.showModal({
@@ -127,16 +154,23 @@ Page({
                             showCancel: false,
                         })
                     }
+                    this.setData({
+                        isGettingList: false
+                    })
                 }
+            }).catch(error =>{
+                wx.hideLoading();
+                this.setData({
+                    isGettingList:false
+                })
             })
         }
+
     },
     chooseBar(e) {
-        console.log('e', e);
         const choosedParam = e.currentTarget.dataset.param;
         if (this.currentChoosedBar !== choosedParam) {
             let topBarListCopy = [...this.data.topBarList];
-            console.log('topBarListCopy', topBarListCopy);
             topBarListCopy.map(item => {
                 item.isChoosed = item.param === choosedParam ? true : false;
             })
@@ -145,16 +179,41 @@ Page({
                 currentChoosedBar: choosedParam,
                 currentPage: 1,
                 waybillListData: [],
+                isGettingList:true,
             })
 
             this.getWaybillList();
         }
     },
     goMatch(e) {
-        console.log('e', e);
         const waybillId = e.currentTarget.dataset.id;
+        const stepId = e.currentTarget.dataset.stepid;
+        console.log('e',e);
         wx.navigateTo({
-            url: '/pages/matchWaybill/matchWaybill?waybillId=' + waybillId
+            url: '/pages/matchWaybill/matchWaybill?waybillId=' + waybillId + '&stepId=' + stepId
         })
+    },
+    getTractor(tractorList) {
+        return new Promise((resolve, reject) => {
+            const postData = {
+                tractor_list: tractorList.join(',')
+            }
+            httpServer('getTractor', postData).then(res => {
+                if (res.data && res.data.code === 0) {
+                    resolve(res);
+                } else {
+                    if (res.data && res.data.message) {
+                        wx.showModal({
+                            content: res.data.message,
+                            showCancel: false,
+                        })
+                    }
+                    reject(res)
+                }
+            }).catch(error =>{
+                reject(error)
+            })
+        })
+
     }
 })

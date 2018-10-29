@@ -1,4 +1,7 @@
 // pages/setting/setting.js
+import {
+    httpServer
+} from '../../api/request.js'
 Page({
 
     /**
@@ -19,7 +22,35 @@ Page({
                 _this.setData({
                     userInfo: res.data
                 })
-                console.log('this',_this.data.userInfo);
+            }
+        })
+    },
+    logout: function() {
+
+        wx.showModal({
+            title: '请确认',
+            content: '退出账号',
+            success(res) {
+                if (res.confirm) {
+                    httpServer('logout').then(res => {
+                        if (res.data && res.data.code === 1) {
+                            wx.clearStorage();
+                            wx.redirectTo({
+                                url: '/pages/index/index'
+                            })
+                        } else {
+                            if (res.data && res.data.message) {
+                                wx.showModal({
+                                    content: res.data.message,
+                                    showCancel: false,
+                                })
+                            }
+
+                        }
+                    })
+                } else if (res.cancel) {
+                    //console.log('用户点击取消')
+                }
             }
         })
 

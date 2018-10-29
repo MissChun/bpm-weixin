@@ -30,25 +30,33 @@ Page({
         choosedFieldIndex: 0,
         searchword: '',
         total: '',
+        totalPage: '',
         currentPage: 1,
         pageSize: 10,
         businessListData: [],
 
         waybillId: '',
-        matchOrderList: [],
+        setpId:'',
         isMatching: false,
+        isGettingList: true,
+
+        matchOrderList: [],
+        cancelOrderList: [],
+        matchedId: [],
     },
 
     /**
      * 生命周期函数--监听页面加载
      */
     onLoad(options) {
-        console.log('options', options);
         this.setData({
-            waybillId: options.waybillId
+            waybillId: options.waybillId,
+            setpId:options.setpId
         })
 
-        this.getWaybillList();
+        this.getMatchedList().then(res => {
+            this.getWaybillList();
+        })
     },
 
     /**
@@ -62,9 +70,6 @@ Page({
      * 页面上拉触底事件的处理函数
      */
     onReachBottom() {
-        this.setData({
-            currentPage: this.data.currentPage + 1
-        })
         this.getWaybillList(true);
     },
 
@@ -76,17 +81,20 @@ Page({
     },
 
     searinputChange(e) {
-        console.log('e', e);
         this.setData({
-            searchword: e.detail.value,
+            searchword: e.detail.value
+        })
+    },
+
+    startSearch(e) {
+        this.setData({
             currentPage: 1,
             businessListData: [],
-            matchOrderList: []
+            matchOrderList: [],
+            isGettingList: true,
         })
 
         this.getWaybillList();
-
-
     },
 
     chooseField(e) {
@@ -96,13 +104,11 @@ Page({
     },
 
     chooseChange(e) {
-        console.log('e', e);
         let index = e.currentTarget.dataset.index;
         let nowKey = `businessListData[${index}].isChoosed`;
         let matchOrderListCopy = [...this.data.matchOrderList];
-        console.log('nowKey', nowKey);
 
-        if (this.data.businessListData[index].isChoosed) {
+        if (this.data.businessListData[index].isChoosed === 'matched') {
             for (let i = 0, length = matchOrderListCopy.length; i < length; i++) {
                 if (this.data.businessListData[index].id === matchOrderListCopy[i]) {
                     matchOrderListCopy.splice(i, 1);
@@ -112,15 +118,38 @@ Page({
         } else {
             matchOrderListCopy.push(this.data.businessListData[index].id);
             this.setData({
-                matchOrderList: matchOrderListCopy
+                matchOrderList: matchOrderListCopy,
+                [nowKey]: 'matched',
             })
         }
-        this.setData({
-            [nowKey]: !this.data.businessListData[index].isChoosed,
-            matchOrderList: matchOrderListCopy
+
+    },
+
+    getMatchedList() {
+
+        return new Promise((resolve, reject) => {
+            const postData = {
+                waybill_order_id: this.data.waybillId
+            };
+
+            httpServer('getMatchedList', postData).then(res => {
+                if (res.data && res.data.code === 0) {
+                    this.setData({
+                        matchedId: res.data.data
+                    })
+                    resolve(res);
+                } else {
+                    if (res.data && res.data.msg) {
+                        wx.showToast({
+                            title: res.data.msg,
+                            icon: 'none',
+                        })
+                    }
+                    reject(res)
+                }
+            })
         })
 
-        console.log('this.data.matchOrderList', this.data.matchOrderList);
     },
 
     getWaybillList(isGetMoreData) {
@@ -132,29 +161,47 @@ Page({
         };
 
         if (this.data.searchword.length) {
-            postData[this.data.fieldList[choosedFieldIndex].id] = this.data.searchword;
+            postData[this.data.fieldList[this.data.choosedFieldIndex].id] = this.data.searchword;
         }
 
-        if (!isGetMoreData || this.data.currentPage <= Math.ceil(this.data.total / this.data.pageSize)) {
+        if (!isGetMoreData || this.data.currentPage < this.data.totalPage) {
+            if (isGetMoreData) {
+                postData.page = this.data.currentPage + 1;
+            }
             wx.showLoading({
                 title: '数据加载中',
                 mask: true,
             });
             httpServer('getBusinessList', postData).then(res => {
                 wx.hideLoading();
+
                 if (res.data && res.data.code === 0) {
                     let businessListData = [...this.data.businessListData];
                     let resultsData = [...res.data.data.data];
-                    resultsData.map(item => {
-                        item.isChoosed = false;
+                    resultsData.map((item, i) => {
+                        if (item.status == 'waiting_related') {
+                            item.isChoosed = 'noMatch';
+                        } else if (['waiting_confirm', 'to_site', 'modify_manager_check', 'modify_department_check'].indexOf(item.status) > -1) {
+                            this.data.matchedId.forEach((Hitem) => {
+                                if (Hitem == item.id) {
+                                    item.isChoosed = 'matched';
+                                }
+                            });
+                        }
                     })
                     businessListData = [...businessListData, ...resultsData];
                     this.setData({
                         businessListData: businessListData,
-                        total: res.data.data.count
+                        total: res.data.data.count,
+                        totalPage: Math.ceil(res.data.data.count / this.data.pageSize),
+                        isGettingList: false
                     })
+                    if (isGetMoreData) {
+                        this.setData({
+                            currentPage: this.data.currentPage + 1
+                        })
+                    }
 
-                    console.log('this.data.businessListData', this.data.businessListData)
                 } else {
                     if (res.data && res.data.message) {
                         wx.showModal({
@@ -162,17 +209,45 @@ Page({
                             showCancel: false,
                         })
                     }
+                    this.setData({
+                        isGettingList: false
+                    })
                 }
+            }).catch(error => {
+                wx.hideLoading();
+                this.setData({
+                    isGettingList: false
+                })
             })
         }
 
     },
+    judeIsCancel(id) {
+        return new Promise((resolve, reject) => {
+            const postData = {
+                section_trip_id: this.data.setpId,
+                business_order_id: id
+            }
+            httpServer('judeIsCancel', postData).then(res => {
+                if (res.data.code == 0 && res.data.data.whether_cancel || res.data.code == 1 || res.data.code == -1) {
+                    //可以匹配
+                    resolve(res);
+                } else {
+                    wx.showToast({
+                        title: '请注意,当前状态不能取消匹配,请核实',
+                        icon: 'none'
+                    })
+                    reject(res)
+                }
+            })
+        })
+    },
     confirmMatch() {
         if (this.data.matchOrderList.length) {
             const postData = {
-                match_order_list:this.data.matchOrderList,
-                waybill_id:this.data.waybillId,
-                cancel_order_list:[]
+                match_order_list: this.data.matchOrderList,
+                waybill_id: this.data.waybillId,
+                cancel_order_list: []
             }
             this.setData({
                 isMatching: true
@@ -195,7 +270,7 @@ Page({
                 }
             })
 
-        }else{
+        } else {
             wx.showToast({
                 title: '请选择业务单',
                 icon: 'none',
