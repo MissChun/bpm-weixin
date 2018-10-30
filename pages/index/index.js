@@ -49,10 +49,15 @@ Page({
         const postData = {
             username: formData.name,
             password: formData.password,
-            sms_verify_code: '0369',
-            platform: "WEB_CLIENT"
+            platform: "WX_PROGRAM"
         }
+        this.setData({
+            isSendAjax : true
+        })
         httpServer('login', postData).then(res => {
+            this.setData({
+                isSendAjax : false
+            })
             if (res.data && res.data.code === 1) {
                 const token = res.data.content.token;
                 let userInfo = res.data.content.user_info;

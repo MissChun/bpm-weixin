@@ -130,8 +130,14 @@ Page({
                     let tractorList = resultsData.map(item => item.capacity);
 
                     this.getTractor(tractorList).then(result =>{
+                        let tractorListData = result.data.data.results;
+                        
                         resultsData.map((item,index) =>{
-                            item.capacityDetail = result.data.data.results[index];
+                            tractorListData.map((tractorItem,tractorIndex)=>{
+                              if(tractorItem.id === item.capacity){
+                                item.capacityDetail = tractorItem;
+                              }
+                            })
                         })
                        let waybillListData = [...this.data.waybillListData, ...resultsData];
                         this.setData({

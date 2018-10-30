@@ -64,7 +64,9 @@ const errorState = function(error) {
             title: '登录过期，请重新登录',
             icon: 'none',
         })
-        wx.redirectTo('/pages/index/index')
+        wx.redirectTo({
+            url: '/pages/index/index'
+        })
     }
 
 }
@@ -80,7 +82,9 @@ const successState = function(response) {
                 icon: 'none',
             })
 
-            wx.redirectTo('/pages/index/index')
+            wx.redirectTo({
+                url: '/pages/index/index'
+            })
 
         } else if (response.data.code == 403) {
             wx.showToast({

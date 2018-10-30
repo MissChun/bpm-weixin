@@ -10,7 +10,7 @@
 
 const api = {
   login:{
-    url: '/bpmwechat/iYdejC/wxlogin',
+    url: '/bpmwechat/iYdejC/bpmlogin',
     method: 'post',
     desc: '登录',
     notNeedToken:true,
@@ -19,7 +19,7 @@ const api = {
     }
   },
   logout:{
-    url: '/bpmwechat/iYdejC/wxlogin/out/',
+    url: '/bpmwechat/iYdejC/bpmlogin/out/',
     method: 'delete',
     desc: '登出',
     param: {
