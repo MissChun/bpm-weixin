@@ -30,6 +30,9 @@
 				<view>收货人：{{item.consignee}}</view>
 				<view>需求液厂：{{item.actual_fluid_name}}</view>
 				<view>{{item.order_number}}-{{item.sale_name}}</view>
+				<view class="business-status">
+					<text>{{item.status_display || '无'}}</text>
+				</view>
 			</view>
 		</view>
 	</view>

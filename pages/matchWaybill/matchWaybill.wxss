@@ -135,6 +135,7 @@ page {
 }
 
 .waybill-item-content {
+    position:relative;
     padding: 30rpx 40rpx 20rpx 40rpx;
 
     font-size: 28rpx;
@@ -208,4 +209,12 @@ page {
     text-align: center;
 
     color: #a4aeba;
+}
+
+.business-status {
+    position: absolute;
+    bottom: 20rpx;
+    right: 40rpx;
+
+    color: #47d2d0;
 }

@@ -36,7 +36,7 @@ Page({
         businessListData: [],
 
         waybillId: '',
-        setpId:'',
+        setpId: '',
         isMatching: false,
         isGettingList: true,
 
@@ -51,8 +51,10 @@ Page({
     onLoad(options) {
         this.setData({
             waybillId: options.waybillId,
-            setpId:options.setpId
+            setpId: options.stepId
         })
+
+        console.log('options', options, this.data.setpId)
 
         this.getMatchedList().then(res => {
             this.getWaybillList();
@@ -104,23 +106,59 @@ Page({
     },
 
     chooseChange(e) {
-        let index = e.currentTarget.dataset.index;
-        let nowKey = `businessListData[${index}].isChoosed`;
         let matchOrderListCopy = [...this.data.matchOrderList];
+        let cancelOrderListCopy = [...this.data.cancelOrderList];
+        const index = e.currentTarget.dataset.index;
+        const nowKey = `businessListData[${index}].isChoosed`;
+        const rowId = this.data.businessListData[index].id;
+        const isAlreadyMatched = this.data.matchedId.includes(rowId);
 
+        console.log('rowId', rowId);
         if (this.data.businessListData[index].isChoosed === 'matched') {
-            for (let i = 0, length = matchOrderListCopy.length; i < length; i++) {
-                if (this.data.businessListData[index].id === matchOrderListCopy[i]) {
-                    matchOrderListCopy.splice(i, 1);
-                    break;
+            if (isAlreadyMatched) {
+                this.judeIsCancel(rowId).then(result => {
+
+                    cancelOrderListCopy.push(rowId);
+
+                    this.setData({
+                        cancelOrderList: cancelOrderListCopy,
+                        [nowKey]: 'noMatch',
+                    })
+                })
+            } else {
+                for (let i = 0, length = matchOrderListCopy.length; i < length; i++) {
+                    if (this.data.businessListData[index].id === matchOrderListCopy[i]) {
+                        matchOrderListCopy.splice(i, 1);
+                        break;
+                    }
                 }
+
+                this.setData({
+                    matchOrderList: matchOrderListCopy,
+                    [nowKey]: 'noMatch',
+                })
             }
+
         } else {
-            matchOrderListCopy.push(this.data.businessListData[index].id);
-            this.setData({
-                matchOrderList: matchOrderListCopy,
-                [nowKey]: 'matched',
-            })
+            if (isAlreadyMatched) {
+                for (let i = 0, length = cancelOrderListCopy.length; i < length; i++) {
+                    if (this.data.businessListData[index].id === cancelOrderListCopy[i]) {
+                        cancelOrderListCopy.splice(i, 1);
+                        break;
+                    }
+                }
+                this.setData({
+                    cancelOrderList: cancelOrderListCopy,
+                    [nowKey]: 'matched',
+                })
+            } else {
+                matchOrderListCopy.push(this.data.businessListData[index].id);
+                this.setData({
+                    matchOrderList: matchOrderListCopy,
+                    [nowKey]: 'matched',
+                })
+            }
+
         }
 
     },
@@ -243,11 +281,11 @@ Page({
         })
     },
     confirmMatch() {
-        if (this.data.matchOrderList.length) {
+        if (this.data.matchOrderList.length || this.data.cancelOrderList.length) {
             const postData = {
                 match_order_list: this.data.matchOrderList,
                 waybill_id: this.data.waybillId,
-                cancel_order_list: []
+                cancel_order_list: this.data.cancelOrderList
             }
             this.setData({
                 isMatching: true
