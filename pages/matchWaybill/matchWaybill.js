@@ -36,7 +36,7 @@ Page({
         businessListData: [],
 
         waybillId: '',
-        setpId: '',
+       .stepId: '',
         isMatching: false,
         isGettingList: true,
 
@@ -51,10 +51,10 @@ Page({
     onLoad(options) {
         this.setData({
             waybillId: options.waybillId,
-            setpId: options.stepId
+            stepId: options.stepId
         })
 
-        console.log('options', options, this.data.setpId)
+        console.log('options', options, this.data.stepId)
 
         this.getMatchedList().then(res => {
             this.getWaybillList();
@@ -263,7 +263,7 @@ Page({
     judeIsCancel(id) {
         return new Promise((resolve, reject) => {
             const postData = {
-                section_trip_id: this.data.setpId,
+                section_trip_id: this.data.stepId,
                 business_order_id: id
             }
             httpServer('judeIsCancel', postData).then(res => {

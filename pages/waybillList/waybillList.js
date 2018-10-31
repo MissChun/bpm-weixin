@@ -33,7 +33,7 @@ Page({
         pageSize: 10,
         currentPage: 1,
         total: '',
-        totalPage:'',
+        totalPage: '',
         searchword: '',
         topBarList: [{
             label: '装车',
@@ -67,6 +67,23 @@ Page({
     onLoad(options) {
         this.getWaybillList();
     },
+
+    onPullDownRefresh() {
+
+        console.log('onPullDownRefresh')
+
+        //wx.startPullDownRefresh();
+        this.setData({
+            currentPage: 1,
+            waybillListData: [],
+            isGettingList: true,
+        })
+        this.getWaybillList().then(res => {
+            wx.stopPullDownRefresh()
+        }).catch(error => {
+            wx.stopPullDownRefresh()
+        });
+    },
     /**
      * 页面上拉触底事件的处理函数
      */
@@ -95,82 +112,89 @@ Page({
         this.setData({
             currentPage: 1,
             waybillListData: [],
-            isGettingList:true,
+            isGettingList: true,
         })
         this.getWaybillList();
     },
     getWaybillList(isGetMoreData) {
 
-        let postData = {
-            page: this.data.currentPage,
-            page_size: this.data.pageSize,
-            search: this.data.currentChoosedBar,
-        };
+        return new Promise((resolve, reject) => {
+            let postData = {
+                page: this.data.currentPage,
+                page_size: this.data.pageSize,
+                search: this.data.currentChoosedBar,
+            };
 
-        if (this.data.searchword.length) {
-            postData[this.data.fieldList[this.data.choosedFieldIndex].id] = this.data.searchword;
-        }
-
-        if (!isGetMoreData || this.data.currentPage < this.data.totalPage) {
-
-            if(isGetMoreData){
-                postData.page = this.data.currentPage +1;
+            if (this.data.searchword.length) {
+                postData[this.data.fieldList[this.data.choosedFieldIndex].id] = this.data.searchword;
             }
-            wx.showLoading({
-                title: '数据加载中',
-                mask: true,
-            });
-            this.setData({
-                isGettingList: true
-            })
-            httpServer('getWaybillList', postData).then(res => {
-                wx.hideLoading();
-                if (res.data && res.data.code === 0) {
-                    let resultsData = res.data.data.data;
-                    let tractorList = resultsData.map(item => item.capacity);
 
-                    this.getTractor(tractorList).then(result =>{
-                        let tractorListData = result.data.data.results;
-                        
-                        resultsData.map((item,index) =>{
-                            tractorListData.map((tractorItem,tractorIndex)=>{
-                              if(tractorItem.id === item.capacity){
-                                item.capacityDetail = tractorItem;
-                              }
+            if (!isGetMoreData || this.data.currentPage < this.data.totalPage) {
+
+                if (isGetMoreData) {
+                    postData.page = this.data.currentPage + 1;
+                }
+
+                wx.showLoading({
+                    title: '数据加载中',
+                    mask: true,
+                });
+                this.setData({
+                    isGettingList: true
+                })
+                httpServer('getWaybillList', postData).then(res => {
+                    wx.hideLoading();
+                    if (res.data && res.data.code === 0) {
+                        let resultsData = res.data.data.data;
+                        let tractorList = resultsData.map(item => item.capacity);
+
+                        this.getTractor(tractorList).then(result => {
+                            let tractorListData = result.data.data.results;
+
+                            resultsData.map((item, index) => {
+                                tractorListData.map((tractorItem, tractorIndex) => {
+                                    if (tractorItem.id === item.capacity) {
+                                        item.capacityDetail = tractorItem;
+                                    }
+                                })
                             })
-                        })
-                       let waybillListData = [...this.data.waybillListData, ...resultsData];
-                        this.setData({
-                            waybillListData: waybillListData,
-                            total: res.data.data.count,
-                            totalPage:Math.ceil(res.data.data.count / this.data.pageSize),
-                            isGettingList: false
-                        })
-                        if(isGetMoreData){
+                            let waybillListData = [...this.data.waybillListData, ...resultsData];
                             this.setData({
-                                currentPage: this.data.currentPage + 1
+                                waybillListData: waybillListData,
+                                total: res.data.data.count,
+                                totalPage: Math.ceil(res.data.data.count / this.data.pageSize),
+                                isGettingList: false
+                            })
+                            if (isGetMoreData) {
+                                this.setData({
+                                    currentPage: this.data.currentPage + 1
+                                })
+                            }
+                        });
+
+                    } else {
+                        if (res.data && res.data.message) {
+                            wx.showModal({
+                                content: res.data.message,
+                                showCancel: false,
                             })
                         }
-                    });
-
-                } else {
-                    if (res.data && res.data.message) {
-                        wx.showModal({
-                            content: res.data.message,
-                            showCancel: false,
+                        this.setData({
+                            isGettingList: false
                         })
                     }
+                    resolve(res)
+                }).catch(error => {
+                    wx.hideLoading();
                     this.setData({
                         isGettingList: false
                     })
-                }
-            }).catch(error =>{
-                wx.hideLoading();
-                this.setData({
-                    isGettingList:false
+                    reject(error)
                 })
-            })
-        }
+            }
+        })
+
+
 
     },
     chooseBar(e) {
@@ -185,7 +209,7 @@ Page({
                 currentChoosedBar: choosedParam,
                 currentPage: 1,
                 waybillListData: [],
-                isGettingList:true,
+                isGettingList: true,
             })
 
             this.getWaybillList();
@@ -194,7 +218,7 @@ Page({
     goMatch(e) {
         const waybillId = e.currentTarget.dataset.id;
         const stepId = e.currentTarget.dataset.stepid;
-        console.log('e',e);
+        console.log('e', e);
         wx.navigateTo({
             url: '/pages/matchWaybill/matchWaybill?waybillId=' + waybillId + '&stepId=' + stepId
         })
@@ -216,7 +240,7 @@ Page({
                     }
                     reject(res)
                 }
-            }).catch(error =>{
+            }).catch(error => {
                 reject(error)
             })
         })
