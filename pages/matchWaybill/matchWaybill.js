@@ -36,7 +36,7 @@ Page({
         businessListData: [],
 
         waybillId: '',
-       .stepId: '',
+        stepId: '',
         isMatching: false,
         isGettingList: true,
 

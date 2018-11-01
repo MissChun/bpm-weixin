@@ -59,6 +59,7 @@ Page({
         currentChoosedBar: 'all_truck_loaded',
         waybillListData: [],
         isGettingList: true,
+        postDataCopy: {},
     },
 
     /**
@@ -132,7 +133,13 @@ Page({
             if (!isGetMoreData || this.data.currentPage < this.data.totalPage) {
 
                 if (isGetMoreData) {
+                    postData = this.data.postDataCopy;
                     postData.page = this.data.currentPage + 1;
+                } else {
+                    //备份搜索条件
+                    this.setData({
+                        postDataCopy: postData,
+                    })
                 }
 
                 wx.showLoading({
@@ -146,31 +153,42 @@ Page({
                     wx.hideLoading();
                     if (res.data && res.data.code === 0) {
                         let resultsData = res.data.data.data;
-                        let tractorList = resultsData.map(item => item.capacity);
 
-                        this.getTractor(tractorList).then(result => {
-                            let tractorListData = result.data.data.results;
+                        if (resultsData.length) {
+                            let tractorList = resultsData.map(item => item.capacity);
 
-                            resultsData.map((item, index) => {
-                                tractorListData.map((tractorItem, tractorIndex) => {
-                                    if (tractorItem.id === item.capacity) {
-                                        item.capacityDetail = tractorItem;
-                                    }
+                            this.getTractor(tractorList).then(result => {
+                                let tractorListData = result.data.data.results;
+
+                                resultsData.map((item, index) => {
+                                    tractorListData.map((tractorItem, tractorIndex) => {
+                                        if (tractorItem.id === item.capacity) {
+                                            item.capacityDetail = tractorItem;
+                                        }
+                                    })
                                 })
-                            })
-                            let waybillListData = [...this.data.waybillListData, ...resultsData];
+                                let waybillListData = [...this.data.waybillListData, ...resultsData];
+                                this.setData({
+                                    waybillListData: waybillListData,
+                                    total: res.data.data.count,
+                                    totalPage: Math.ceil(res.data.data.count / this.data.pageSize),
+                                    isGettingList: false
+                                })
+                                if (isGetMoreData) {
+                                    this.setData({
+                                        currentPage: this.data.currentPage + 1
+                                    })
+                                }
+                            });
+                        } else {
                             this.setData({
-                                waybillListData: waybillListData,
+                                waybillListData: [...this.data.waybillListData],
                                 total: res.data.data.count,
                                 totalPage: Math.ceil(res.data.data.count / this.data.pageSize),
                                 isGettingList: false
                             })
-                            if (isGetMoreData) {
-                                this.setData({
-                                    currentPage: this.data.currentPage + 1
-                                })
-                            }
-                        });
+                        }
+
 
                     } else {
                         if (res.data && res.data.message) {

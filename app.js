@@ -1,7 +1,7 @@
 //app.js
 App({
-  onLaunch: function () {
-
+  onLaunch: function (options) {
+  	console.log('options',options);
   },
   globalData: {
     userInfo: null
