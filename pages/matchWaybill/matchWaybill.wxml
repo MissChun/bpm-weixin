@@ -1,0 +1,48 @@
+<view class="match-waybill-container">
+	<view class="top-bar-view">
+		<view class="search-view">
+			<view class="search-box">
+				<view class="traggle-pick float-left">
+					<picker mode="selector" bindchange="chooseField" range-key="label" value="{{choosedFieldIndex}}" range="{{fieldList}}">
+					    <view class="float-left filed-picker">{{fieldList[choosedFieldIndex].label}}</view>
+					</picker>
+					<view class="traggle-down"><image src="/images/traggle_down.png" /></view>
+				</view>
+				<view class="float-left search-input-view">
+					<input confirm-type="search" class="public-input" type="text" name="searchWord" placeholder="请输入" bindinput="searinputChange" bindconfirm="startSearch"/>
+				</view>
+			</view>
+		</view>
+	</view>
+	<view class="waybill-list" wx:if="{{businessListData.length}}">
+		<view class="waybill-item" wx:for="{{businessListData}}" wx:key="id">
+			<view class="waybill-item-title">
+				<view class="waybill-item-title-content">
+					<text class="float-left">{{item.station}}</text>
+					<text class="no-choose" wx-if="{{item.isChoosed === 'noMatch'}}" data-index="{{index}}" bindtap="chooseChange"></text>
+					<icon class="choose-icon" type="success" color="#17BEBB" size="23" wx-if="{{item.isChoosed === 'matched'}}" data-index="{{index}}" bindtap="chooseChange"></icon>
+				</view>
+			</view>
+			<view class="waybill-item-content">
+				<view>卸货站地址：{{item.station_address}}</view>
+				<view>计划到站时间：{{item.plan_arrive_time}}</view>
+				<view>计划卸车吨位：{{item.plan_tonnage}}吨</view>
+				<view>收货人：{{item.consignee}}</view>
+				<view>需求液厂：{{item.actual_fluid_name}}</view>
+				<view>{{item.order_number}}-{{item.sale_name}}</view>
+				<view class="business-status">
+					<text>{{item.status_display || '无'}}</text>
+				</view>
+			</view>
+		</view>
+	</view>
+	<view class="gray-tip" wx:if="{{total !== '' && currentPage == totalPage && !isGettingList}}">无更多数据哦~</view>
+	<view wx:if="{{!businessListData.length && !isGettingList }}" class="null-view">
+		<view><image src="/images/null_data.png"></image></view>
+		<text>暂无数据哦~</text>
+	</view>
+	<view class="buttom-confirm">
+		<button  bindtap="confirmMatch" loading="{{isMatching}}" disabled="{{isMatching}}"  class="confirm-match-btn">提交卸货单</button>
+	</view>
+</view>
+
