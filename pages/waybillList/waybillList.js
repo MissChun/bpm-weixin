@@ -38,11 +38,11 @@ Page({
         topBarList: [{
             label: '装车',
             param: 'all_truck_loaded',
-            isChoosed: true
+            isChoosed: false
         }, {
             label: '匹配卸车',
             param: 'all_match',
-            isChoosed: false
+            isChoosed: true
         }, {
             label: '卸车',
             param: 'all_unload',
@@ -56,7 +56,7 @@ Page({
             param: '',
             isChoosed: false
         }],
-        currentChoosedBar: 'all_truck_loaded',
+        currentChoosedBar: 'all_match',
         waybillListData: [],
         isGettingList: true,
         postDataCopy: {},
@@ -191,9 +191,9 @@ Page({
 
 
                     } else {
-                        if (res.data && res.data.message) {
+                        if (res.data && res.data.msg) {
                             wx.showModal({
-                                content: res.data.message,
+                                content: res.data.msg,
                                 showCancel: false,
                             })
                         }
@@ -250,9 +250,9 @@ Page({
                 if (res.data && res.data.code === 0) {
                     resolve(res);
                 } else {
-                    if (res.data && res.data.message) {
+                    if (res.data && res.data.msg) {
                         wx.showModal({
-                            content: res.data.message,
+                            content: res.data.msg,
                             showCancel: false,
                         })
                     }

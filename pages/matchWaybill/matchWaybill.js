@@ -241,9 +241,9 @@ Page({
                     }
 
                 } else {
-                    if (res.data && res.data.message) {
+                    if (res.data && res.data.msg) {
                         wx.showModal({
-                            content: res.data.message,
+                            content: res.data.msg,
                             showCancel: false,
                         })
                     }
@@ -295,13 +295,13 @@ Page({
                     isMatching: false
                 })
                 if (res.data && res.data.code === 0) {
-                    wx.switchTab({
+                    wx.reLaunch({
                         url: '/pages/waybillList/waybillList',
                     })
                 } else {
-                    if (res.data && res.data.message) {
+                    if (res.data && res.data.msg) {
                         wx.showModal({
-                            content: res.data.message,
+                            content: res.data.msg,
                             showCancel: false,
                         })
                     }
