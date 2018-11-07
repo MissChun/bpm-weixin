@@ -32,15 +32,19 @@ Page({
             content: '退出账号',
             success(res) {
                 if (res.confirm) {
-                    httpServer('logout').then(res => {
-                        if (res.data && res.data.code === 1) {
-                            wx.clearStorage();
-                            wx.redirectTo({
-                                url: '/pages/index/index'
-                            })
-
-                        }
+                    wx.clearStorage();
+                    wx.redirectTo({
+                        url: '/pages/index/index'
                     })
+                    // httpServer('logout').then(res => {
+                    //     if (res.data && res.data.code === 1) {
+                    //         wx.clearStorage();
+                    //         wx.redirectTo({
+                    //             url: '/pages/index/index'
+                    //         })
+
+                    //     }
+                    // })
 
                 } else if (res.cancel) {
                     //console.log('用户点击取消')

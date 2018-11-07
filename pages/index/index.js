@@ -92,6 +92,10 @@ Page({
                 })
 
             }
+        }).catch(error =>{
+            this.setData({
+                isSendAjax: false
+            })
         })
 
     },
