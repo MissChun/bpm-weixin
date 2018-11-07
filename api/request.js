@@ -16,8 +16,8 @@ let domainUrl = isProduction ? 'https://api.91lng.com/wechat' : 'http://39.104.7
 /* 统一处理网络问题或者代码问题造成的错误 */
 const errorState = function(error) {
     let errorMsg = '';
-    if (error && error.response) {
-        switch (error.response.status) {
+    if (error && error.statusCode) {
+        switch (error.statusCode) {
             case 400:
                 errorMsg = '参数错误';
                 break;
@@ -61,14 +61,19 @@ const errorState = function(error) {
         errorMsg = '连接服务器失败!'
     }
 
-    if (error && error.response && error.response.status === 401) {
+    if (error && error.statusCode === 401) {
         wx.showToast({
             title: '登录过期，请重新登录',
             icon: 'none',
         })
-        wx.redirectTo({
-            url: '/pages/index/index'
-        })
+
+        wx.clearStorage();
+
+        setTimeout(() => {
+            wx.redirectTo({
+                url: '/pages/index/index'
+            })
+        }, 2000)
     } else {
         wx.showToast({
             title: errorMsg,
@@ -89,9 +94,13 @@ const successState = function(response) {
                 icon: 'none',
             })
 
-            wx.redirectTo({
-                url: '/pages/index/index'
-            })
+            wx.clearStorage();
+
+            setTimeout(() => {
+                wx.redirectTo({
+                    url: '/pages/index/index'
+                })
+            }, 2000)
 
         } else if (response.data.code == 403) {
             wx.showToast({
@@ -189,7 +198,7 @@ export const httpServer = (apiName, postData, defaultSuccessCallback, defaultErr
                     reject(res)
                 } else {
                     if (defaultSuccessCallback === undefined) {
-
+                        successState(res);
                     } else if (typeof defaultSuccessCallback === 'function') {
                         defaultSuccessCallback(res);
                     }

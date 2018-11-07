@@ -71,7 +71,7 @@ Page({
             this.setData({
                 isSendAjax: false
             })
-            if (res.data && res.data.code === 1) {
+            if (res.data && res.data.code === 0) {
                 const token = res.data.content.token;
                 let userInfo = res.data.content.user_info;
                 userInfo.company = res.data.content.user.profile.company;
@@ -90,14 +90,6 @@ Page({
                         })
                     }
                 })
-
-            } else {
-                if (res.data && res.data.msg) {
-                    wx.showModal({
-                        content: res.data.msg,
-                        showCancel: false,
-                    })
-                }
 
             }
         })
