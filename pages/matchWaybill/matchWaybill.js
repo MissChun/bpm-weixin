@@ -54,8 +54,6 @@ Page({
             stepId: options.stepId
         })
 
-        console.log('options', options, this.data.stepId)
-
         this.getMatchedList().then(res => {
             this.getWaybillList();
         })
@@ -177,12 +175,6 @@ Page({
                     })
                     resolve(res);
                 } else {
-                    if (res.data && res.data.msg) {
-                        wx.showToast({
-                            title: res.data.msg,
-                            icon: 'none',
-                        })
-                    }
                     reject(res)
                 }
             })
@@ -241,12 +233,6 @@ Page({
                     }
 
                 } else {
-                    if (res.data && res.data.msg) {
-                        wx.showModal({
-                            content: res.data.msg,
-                            showCancel: false,
-                        })
-                    }
                     this.setData({
                         isGettingList: false
                     })
@@ -298,13 +284,6 @@ Page({
                     wx.reLaunch({
                         url: '/pages/waybillList/waybillList',
                     })
-                } else {
-                    if (res.data && res.data.msg) {
-                        wx.showModal({
-                            content: res.data.msg,
-                            showCancel: false,
-                        })
-                    }
                 }
             })
 
