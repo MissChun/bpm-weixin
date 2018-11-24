@@ -1,5 +1,6 @@
 {
   "navigationBarTitleText": "91LNG-贸易管理系统",
   "navigationBarBackgroundColor":"#17BEBB",
-  "navigationBarTextStyle":"white"
+  "navigationBarTextStyle":"white",
+  "enablePullDownRefresh":true
 }
