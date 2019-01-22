@@ -1,7 +1,7 @@
 import {
     httpServer
 } from '../../api/request.js'
-
+import gio from '../../utils/gio-minp';
 Page({
     onShareAppMessage() {
         return {
@@ -72,6 +72,7 @@ Page({
                 isSendAjax: false
             })
             if (res.data && res.data.code === 0) {
+              gio('setUserId', res.data.content.data.user_id); 
                 const token = res.data.content.token;
                 let userInfo = res.data.content.user_info;
                 userInfo.company = res.data.content.user.profile.company;
